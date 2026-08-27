@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevGuard Projects</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            margin: 0;
+            color: #1f2937;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 60px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            margin-bottom: 8px;
+        }
+
+        p {
+            color: #6b7280;
+        }
+
+        label {
+            display: block;
+            margin-top: 20px;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 15px;
+            box-sizing: border-box;
+        }
+
+        button {
+            margin-top: 25px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            background: #111827;
+            color: white;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        button:hover {
+            background: #1f2937;
+        }
+
+        #message {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Create Project</h1>
+        <p>Connect your GitHub repository with DevGuard.</p>
+
+        <label>Project Name</label>
+        <input
+            type="text"
+            id="projectName"
+            placeholder="Enter project name"
+        >
+
+        <label>GitHub Repository URL</label>
+        <input
+            type="text"
+            id="githubUrl"
+            placeholder="https://github.com/username/project"
+        >
+
+        <button onclick="addProject()">Add Project</button>
+
+        <div id="message"></div>
+
+    </div>
+
+    <script>
+        async function addProject() {
+
+            const name = document.getElementById("projectName").value;
+            const github_url = document.getElementById("githubUrl").value;
+            const message = document.getElementById("message");
+
+            if (!name || !github_url) {
+                message.innerText = "Please fill all fields.";
+                return;
+            }
+
+            try {
+
+                const response = await fetch("http://localhost:5000/projects", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        name,
+                        github_url
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    message.innerText = "Project added successfully!";
+                    document.getElementById("projectName").value = "";
+                    document.getElementById("githubUrl").value = "";
+                } else {
+                    message.innerText = data.message || "Failed to add project.";
+                }
+
+            } catch (error) {
+                message.innerText = "Backend connection failed.";
+            }
+        }
+    </script>
+
+</body>
+</html>
