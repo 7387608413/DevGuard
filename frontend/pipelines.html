@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>DevGuard Pipeline</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f6f8fb;
+            color: #111827;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 230px;
+            height: 100vh;
+            background: #111827;
+            padding: 25px 15px;
+        }
+
+        .logo {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 40px;
+            padding: 0 12px;
+        }
+
+        .menu {
+            display: block;
+            color: #9ca3af;
+            text-decoration: none;
+            padding: 13px 12px;
+            border-radius: 8px;
+            margin-bottom: 5px;
+        }
+
+        .menu:hover,
+        .menu.active {
+            background: #1f2937;
+            color: white;
+        }
+
+        .main {
+            margin-left: 230px;
+            padding: 30px;
+        }
+
+        .header h1 {
+            margin: 0 0 6px 0;
+        }
+
+        .header p {
+            color: #6b7280;
+        }
+
+        .pipeline {
+            margin-top: 25px;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            max-width: 800px;
+        }
+
+        .project-info {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            color: #6b7280;
+        }
+
+        .stage {
+            display: flex;
+            justify-content: space-between;
+            padding: 18px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .stage:last-child {
+            border-bottom: none;
+        }
+
+        .success {
+            color: #16a34a;
+            font-weight: bold;
+        }
+
+        .waiting {
+            color: #d97706;
+            font-weight: bold;
+        }
+
+        .failed {
+            color: #dc2626;
+            font-weight: bold;
+        }
+
+        .empty {
+            text-align: center;
+            color: #6b7280;
+            padding: 30px;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            DevGuard
+        </div>
+
+        <a href="index.html" class="menu">
+            Dashboard
+        </a>
+
+        <a href="projects.html" class="menu">
+            Projects
+        </a>
+
+        <a href="deployments.html" class="menu">
+            Deployments
+        </a>
+
+        <a href="pipelines.html" class="menu active">
+            Pipelines
+        </a>
+
+        <a href="#" class="menu">
+            Logs
+        </a>
+
+        <a href="#" class="menu">
+            AI Assistant
+        </a>
+
+    </aside>
+
+
+    <main class="main">
+
+        <div class="header">
+
+            <h1>
+                Pipeline
+            </h1>
+
+            <p>
+                View your application deployment pipeline.
+            </p>
+
+        </div>
+
+
+        <div class="pipeline">
+
+            <div id="pipelineContent">
+
+                <div class="empty">
+                    Loading pipeline...
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <script>
+
+        const API_URL = "http://16.171.171.86:5000";
+
+
+        async function loadPipeline() {
+
+            const content =
+                document.getElementById("pipelineContent");
+
+            try {
+
+                const response =
+                    await fetch(`${API_URL}/pipelines`);
+
+                if (!response.ok) {
+                    throw new Error("Failed to load pipelines");
+                }
+
+                const pipelines =
+                    await response.json();
+
+
+                if (pipelines.length === 0) {
+
+                    content.innerHTML = `
+                        <div class="empty">
+                            No pipelines available.
+                        </div>
+                    `;
+
+                    return;
+                }
+
+
+                const pipeline = pipelines[0];
+
+
+                let statusClass = "waiting";
+
+                if (
+                    pipeline.status &&
+                    pipeline.status.toLowerCase() === "success"
+                ) {
+                    statusClass = "success";
+                }
+
+                if (
+                    pipeline.status &&
+                    pipeline.status.toLowerCase() === "failed"
+                ) {
+                    statusClass = "failed";
+                }
+
+
+                content.innerHTML = `
+
+                    <div class="project-info">
+                        <strong>Project #${pipeline.project_id}</strong>
+                        <br>
+                        Pipeline ID: ${pipeline.id}
+                    </div>
+
+                    <div class="stage">
+                        <span>Checkout Code</span>
+                        <span class="success">
+                            ✓ Success
+                        </span>
+                    </div>
+
+                    <div class="stage">
+                        <span>Build</span>
+                        <span class="success">
+                            ✓ Success
+                        </span>
+                    </div>
+
+                    <div class="stage">
+                        <span>Test</span>
+                        <span class="success">
+                            ✓ Success
+                        </span>
+                    </div>
+
+                    <div class="stage">
+                        <span>Docker Build</span>
+                        <span class="success">
+                            ✓ Success
+                        </span>
+                    </div>
+
+                    <div class="stage">
+                        <span>AWS Deployment</span>
+                        <span class="${statusClass}">
+                            ${pipeline.status}
+                        </span>
+                    </div>
+
+                `;
+
+
+            } catch (error) {
+
+                console.error(
+                    "Pipeline loading error:",
+                    error
+                );
+
+                content.innerHTML = `
+                    <div class="empty">
+                        Failed to connect to backend.
+                    </div>
+                `;
+
+            }
+
+        }
+
+
+        loadPipeline();
+
+    </script>
+
+</body>
+
+</html>

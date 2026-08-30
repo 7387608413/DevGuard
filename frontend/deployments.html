@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>DevGuard Deployments</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f6f8fb;
+            color: #111827;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 230px;
+            height: 100vh;
+            background: #111827;
+            color: white;
+            padding: 25px 15px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            padding: 0 12px;
+            margin-bottom: 40px;
+        }
+
+        .menu {
+            display: block;
+            text-decoration: none;
+            color: #9ca3af;
+            padding: 13px 12px;
+            margin-bottom: 5px;
+            border-radius: 8px;
+        }
+
+        .menu:hover,
+        .menu.active {
+            background: #1f2937;
+            color: white;
+        }
+
+        .main {
+            margin-left: 230px;
+            padding: 30px;
+        }
+
+        .header {
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        .header p {
+            color: #6b7280;
+            margin-top: 7px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 25px;
+        }
+
+        .card h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 16px 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .success {
+            color: #16a34a;
+            font-weight: bold;
+        }
+
+        .failed {
+            color: #dc2626;
+            font-weight: bold;
+        }
+
+        .waiting {
+            color: #d97706;
+            font-weight: bold;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 30px;
+            color: #6b7280;
+        }
+
+        @media (max-width: 700px) {
+
+            .sidebar {
+                width: 180px;
+            }
+
+            .main {
+                margin-left: 180px;
+                padding: 20px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            DevGuard
+        </div>
+
+        <a href="index.html" class="menu">
+            Dashboard
+        </a>
+
+        <a href="projects.html" class="menu">
+            Projects
+        </a>
+
+        <a href="deployments.html" class="menu active">
+            Deployments
+        </a>
+
+        <a href="#" class="menu">
+            Pipelines
+        </a>
+
+        <a href="#" class="menu">
+            Logs
+        </a>
+
+        <a href="#" class="menu">
+            AI Assistant
+        </a>
+
+    </aside>
+
+
+    <!-- Main -->
+
+    <main class="main">
+
+        <div class="header">
+
+            <h1>
+                Deployments
+            </h1>
+
+            <p>
+                Track your application deployments.
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h2>
+                Deployment History
+            </h2>
+
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Project
+                        </th>
+
+                        <th>
+                            Version
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                        <th>
+                            Date
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="deploymentList">
+
+                    <tr>
+
+                        <td colspan="4">
+
+                            <div class="empty">
+                                Loading deployments...
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </main>
+
+
+    <script>
+
+        async function loadDeployments() {
+
+            try {
+
+                const response = await fetch(
+                    "http://16.171.171.86:5000/deployments"
+                );
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Failed to load deployments"
+                    );
+
+                }
+
+                const deployments = await response.json();
+
+                const list =
+                    document.getElementById(
+                        "deploymentList"
+                    );
+
+                list.innerHTML = "";
+
+
+                if (deployments.length === 0) {
+
+                    list.innerHTML = `
+                        <tr>
+                            <td colspan="4">
+                                <div class="empty">
+                                    No deployments yet.
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+
+                    return;
+                }
+
+
+                deployments.forEach(deployment => {
+
+                    let statusClass = "waiting";
+
+
+                    if (
+                        deployment.status &&
+                        deployment.status.toLowerCase() === "success"
+                    ) {
+
+                        statusClass = "success";
+
+                    }
+
+
+                    if (
+                        deployment.status &&
+                        deployment.status.toLowerCase() === "failed"
+                    ) {
+
+                        statusClass = "failed";
+
+                    }
+
+
+                    const row =
+                        document.createElement("tr");
+
+
+                    row.innerHTML = `
+
+                        <td>
+                            Project #${deployment.project_id}
+                        </td>
+
+                        <td>
+                            ${deployment.version || "-"}
+                        </td>
+
+                        <td class="${statusClass}">
+                            ${deployment.status || "-"}
+                        </td>
+
+                        <td>
+                            ${
+                                deployment.created_at
+                                    ? new Date(
+                                        deployment.created_at
+                                    ).toLocaleString()
+                                    : "-"
+                            }
+                        </td>
+
+                    `;
+
+
+                    list.appendChild(row);
+
+                });
+
+
+            } catch (error) {
+
+                console.error(
+                    "Deployment loading error:",
+                    error
+                );
+
+
+                document.getElementById(
+                    "deploymentList"
+                ).innerHTML = `
+
+                    <tr>
+
+                        <td colspan="4">
+
+                            <div class="empty">
+                                Failed to connect to backend.
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                `;
+
+            }
+
+        }
+
+
+        loadDeployments();
+
+    </script>
+
+</body>
+
+</html>

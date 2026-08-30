@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>DevGuard AI Assistant</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f6f8fb;
+            color: #111827;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 230px;
+            height: 100vh;
+            background: #111827;
+            padding: 25px 15px;
+        }
+
+        .logo {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 40px;
+            padding: 0 12px;
+        }
+
+        .menu {
+            display: block;
+            color: #9ca3af;
+            text-decoration: none;
+            padding: 13px 12px;
+            border-radius: 8px;
+            margin-bottom: 5px;
+        }
+
+        .menu:hover,
+        .menu.active {
+            background: #1f2937;
+            color: white;
+        }
+
+        .main {
+            margin-left: 230px;
+            padding: 30px;
+        }
+
+        .header h1 {
+            margin: 0 0 6px 0;
+        }
+
+        .header p {
+            color: #6b7280;
+        }
+
+        .assistant {
+            margin-top: 25px;
+            max-width: 900px;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 25px;
+        }
+
+        .chat {
+            height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            background: #f9fafb;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 12px 15px;
+            border-radius: 10px;
+            max-width: 75%;
+            line-height: 1.5;
+        }
+
+        .bot {
+            background: #e5e7eb;
+            margin-right: auto;
+        }
+
+        .user {
+            background: #111827;
+            color: white;
+            margin-left: auto;
+        }
+
+        .input-area {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .input-area input {
+            flex: 1;
+            padding: 13px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        .input-area button {
+            padding: 13px 22px;
+            border: none;
+            border-radius: 8px;
+            background: #111827;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .input-area button:hover {
+            background: #1f2937;
+        }
+
+        .input-area button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            DevGuard
+        </div>
+
+        <a href="index.html" class="menu">
+            Dashboard
+        </a>
+
+        <a href="projects.html" class="menu">
+            Projects
+        </a>
+
+        <a href="deployments.html" class="menu">
+            Deployments
+        </a>
+
+        <a href="pipeline.html" class="menu">
+            Pipelines
+        </a>
+
+        <a href="logs.html" class="menu">
+            Logs
+        </a>
+
+        <a href="ai.html" class="menu active">
+            AI Assistant
+        </a>
+
+    </aside>
+
+
+    <main class="main">
+
+        <div class="header">
+
+            <h1>
+                AI Assistant
+            </h1>
+
+            <p>
+                Ask questions about your DevGuard system.
+            </p>
+
+        </div>
+
+
+        <div class="assistant">
+
+            <div class="chat" id="chat">
+
+                <div class="message bot">
+                    Hello! I'm DevGuard AI Assistant.
+                    Ask me about your projects, deployments,
+                    pipelines, or logs.
+                </div>
+
+            </div>
+
+
+            <div class="input-area">
+
+                <input
+                    type="text"
+                    id="userInput"
+                    placeholder="Ask something..."
+                    onkeydown="handleEnter(event)"
+                >
+
+                <button
+                    id="sendButton"
+                    onclick="sendMessage()">
+                    Send
+                </button>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <script>
+
+        const API_URL = "http://16.171.171.86:5000";
+
+
+        function handleEnter(event) {
+
+            if (event.key === "Enter") {
+                sendMessage();
+            }
+
+        }
+
+
+        function addMessage(text, type) {
+
+            const chat =
+                document.getElementById("chat");
+
+            const message =
+                document.createElement("div");
+
+            message.className =
+                `message ${type}`;
+
+            message.textContent = text;
+
+            chat.appendChild(message);
+
+            chat.scrollTop =
+                chat.scrollHeight;
+
+        }
+
+
+        async function sendMessage() {
+
+            const input =
+                document.getElementById("userInput");
+
+            const button =
+                document.getElementById("sendButton");
+
+            const question =
+                input.value.trim();
+
+
+            if (!question) {
+                return;
+            }
+
+
+            addMessage(question, "user");
+
+            input.value = "";
+
+            button.disabled = true;
+
+            button.textContent = "Thinking...";
+
+
+            try {
+
+                const response =
+                    await fetch(`${API_URL}/ai`, {
+
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            question: question
+                        })
+
+                    });
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Backend request failed"
+                    );
+
+                }
+
+
+                const data =
+                    await response.json();
+
+
+                addMessage(
+                    data.answer,
+                    "bot"
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "AI Assistant error:",
+                    error
+                );
+
+
+                addMessage(
+                    "Unable to connect to DevGuard backend.",
+                    "bot"
+                );
+
+            }
+
+
+            button.disabled = false;
+
+            button.textContent = "Send";
+
+        }
+
+    </script>
+
+</body>
+
+</html>

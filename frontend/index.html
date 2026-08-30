@@ -8,19 +8,20 @@
     <style>
         * {
             box-sizing: border-box;
-            margin: 0;
-            padding: 0;
         }
 
         body {
+            margin: 0;
             font-family: Arial, sans-serif;
-            background: #f5f7fb;
-            color: #1f2937;
+            background: #f6f8fb;
+            color: #111827;
         }
 
         .sidebar {
             position: fixed;
-            width: 220px;
+            left: 0;
+            top: 0;
+            width: 230px;
             height: 100vh;
             background: #111827;
             color: white;
@@ -30,92 +31,114 @@
         .logo {
             font-size: 24px;
             font-weight: bold;
-            margin-bottom: 35px;
-            padding-left: 10px;
+            padding: 0 12px;
+            margin-bottom: 40px;
         }
 
         .menu {
             display: block;
-            padding: 13px 10px;
-            margin-bottom: 5px;
-            color: #d1d5db;
             text-decoration: none;
+            color: #9ca3af;
+            padding: 13px 12px;
+            margin-bottom: 5px;
             border-radius: 8px;
         }
 
-        .menu:hover {
+        .menu:hover,
+        .menu.active {
             background: #1f2937;
             color: white;
         }
 
         .main {
-            margin-left: 220px;
+            margin-left: 230px;
             padding: 30px;
         }
 
         .header {
-            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 25px;
         }
 
         .header h1 {
-            font-size: 28px;
-            margin-bottom: 8px;
+            margin: 0;
+            font-size: 30px;
         }
 
         .header p {
             color: #6b7280;
+            margin-top: 7px;
         }
 
-        .cards {
+        .role {
+            background: white;
+            border: 1px solid #e5e7eb;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .stats {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            margin-bottom: 30px;
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 25px;
+        }
+
+        .stat-title {
+            color: #6b7280;
+            font-size: 15px;
+            margin-bottom: 15px;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 22px;
         }
 
         .card {
             background: white;
-            padding: 22px;
+            border: 1px solid #e5e7eb;
             border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            padding: 24px;
         }
 
-        .card h3 {
-            color: #6b7280;
-            font-size: 14px;
-            margin-bottom: 12px;
-        }
-
-        .number {
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .section {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-        }
-
-        .section h2 {
+        .card h2 {
+            margin-top: 0;
             margin-bottom: 20px;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
+        .project-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            padding: 15px 8px;
+            border-bottom: 1px solid #e5e7eb;
+            align-items: center;
         }
 
-        th, td {
-            text-align: left;
-            padding: 15px;
-            border-bottom: 1px solid #eee;
+        .project-row:last-child {
+            border-bottom: none;
         }
 
-        th {
+        .table-head {
             color: #6b7280;
             font-size: 14px;
+            font-weight: bold;
         }
 
         .success {
@@ -128,9 +151,90 @@
             font-weight: bold;
         }
 
-        @media (max-width: 900px) {
-            .cards {
+        .waiting {
+            color: #d97706;
+            font-weight: bold;
+        }
+
+        .pipeline-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 16px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .pipeline-row:last-child {
+            border-bottom: none;
+        }
+
+        .check {
+            color: #16a34a;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .assistant {
+            margin-top: 22px;
+            background: #111827;
+            color: white;
+            border-radius: 12px;
+            padding: 28px;
+        }
+
+        .assistant h2 {
+            margin-top: 0;
+        }
+
+        .assistant p {
+            color: #d1d5db;
+        }
+
+        .assistant button {
+            margin-top: 10px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            background: white;
+            color: #111827;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .assistant button:hover {
+            background: #e5e7eb;
+        }
+
+        #loading {
+            color: #6b7280;
+        }
+
+        @media (max-width: 1000px) {
+            .stats {
                 grid-template-columns: repeat(2, 1fr);
+            }
+
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .sidebar {
+                width: 180px;
+            }
+
+            .main {
+                margin-left: 180px;
+                padding: 20px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .project-row {
+                grid-template-columns: 1fr;
+                gap: 8px;
             }
         }
     </style>
@@ -139,70 +243,364 @@
 <body>
 
     <aside class="sidebar">
-        <div class="logo">DevGuard</div>
 
-        <a href="#" class="menu">Dashboard</a>
-        <a href="#" class="menu">Projects</a>
-        <a href="#" class="menu">Deployments</a>
-        <a href="#" class="menu">Pipelines</a>
-        <a href="#" class="menu">Logs</a>
-        <a href="#" class="menu">AI Assistant</a>
+        <div class="logo">
+            DevGuard
+        </div>
+
+        <a href="index.html" class="menu active">
+            Dashboard
+        </a>
+
+        <a href="projects.html" class="menu">
+            Projects
+        </a>
+
+        <a href="deployments.html" class="menu">
+            Deployments
+        </a>
+
+        <a href="pipelines.html" class="menu">
+            Pipelines
+        </a>
+
+        <a href="logs.html" class="menu">
+            Logs
+        </a>
+
+        <a href="ai.html" class="menu">
+            AI Assistant
+        </a>
+
     </aside>
+
 
     <main class="main">
 
         <div class="header">
-            <h1>Dashboard</h1>
-            <p>Monitor your DevOps deployments</p>
-        </div>
 
-        <div class="cards">
-
-            <div class="card">
-                <h3>Total Projects</h3>
-                <div class="number">0</div>
+            <div>
+                <h1>Dashboard</h1>
+                <p>
+                    Monitor your applications and deployments
+                </p>
             </div>
 
-            <div class="card">
-                <h3>Successful Deployments</h3>
-                <div class="number">0</div>
-            </div>
-
-            <div class="card">
-                <h3>Failed Deployments</h3>
-                <div class="number">0</div>
-            </div>
-
-            <div class="card">
-                <h3>Active Pipelines</h3>
-                <div class="number">0</div>
+            <div class="role">
+                Developer
             </div>
 
         </div>
 
-        <div class="section">
-            <h2>Recent Deployments</h2>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Project</th>
-                        <th>Status</th>
-                        <th>Deployment</th>
-                    </tr>
-                </thead>
+        <div class="stats">
 
-                <tbody>
-                    <tr>
-                        <td>No deployments yet</td>
-                        <td>-</td>
-                        <td>-</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="stat-card">
+                <div class="stat-title">
+                    Total Projects
+                </div>
+
+                <div
+                    class="stat-number"
+                    id="totalProjects"
+                >
+                    -
+                </div>
+            </div>
+
+
+            <div class="stat-card">
+                <div class="stat-title">
+                    Successful Deployments
+                </div>
+
+                <div
+                    class="stat-number"
+                    id="successfulDeployments"
+                >
+                    -
+                </div>
+            </div>
+
+
+            <div class="stat-card">
+                <div class="stat-title">
+                    Failed Deployments
+                </div>
+
+                <div
+                    class="stat-number"
+                    id="failedDeployments"
+                >
+                    -
+                </div>
+            </div>
+
+
+            <div class="stat-card">
+                <div class="stat-title">
+                    Active Pipelines
+                </div>
+
+                <div
+                    class="stat-number"
+                    id="activePipelines"
+                >
+                    -
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="content">
+
+            <div class="card">
+
+                <h2>
+                    Recent Projects
+                </h2>
+
+                <div class="project-row table-head">
+                    <div>Project</div>
+                    <div>Status</div>
+                    <div>Version</div>
+                    <div>Date</div>
+                </div>
+
+                <div id="projects">
+                    <div id="loading">
+                        Loading projects...
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <h2>
+                    Pipeline Status
+                </h2>
+
+                <div class="pipeline-row">
+                    <span>Build</span>
+                    <span class="check">✓</span>
+                </div>
+
+                <div class="pipeline-row">
+                    <span>Test</span>
+                    <span class="check">✓</span>
+                </div>
+
+                <div class="pipeline-row">
+                    <span>Docker</span>
+                    <span class="check">✓</span>
+                </div>
+
+                <div class="pipeline-row">
+                    <span>Deployment</span>
+                    <span class="waiting">Waiting</span>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="assistant">
+
+            <h2>
+                AI DevOps Assistant
+            </h2>
+
+            <p>
+                Analyze pipeline failures and get an
+                explanation with a suggested solution.
+            </p>
+
+            <button onclick="analyzePipeline()">
+                Analyze Pipeline
+            </button>
+
         </div>
 
     </main>
+
+
+    <script>
+
+        const API_URL =
+            "http://16.171.171.86:5000";
+
+
+        async function loadDashboard() {
+
+            try {
+
+                const response =
+                    await fetch(
+                        `${API_URL}/dashboard`
+                    );
+
+                if (!response.ok) {
+                    throw new Error(
+                        "Dashboard API failed"
+                    );
+                }
+
+                const data =
+                    await response.json();
+
+
+                document.getElementById(
+                    "totalProjects"
+                ).innerText =
+                    data.total_projects;
+
+
+                document.getElementById(
+                    "successfulDeployments"
+                ).innerText =
+                    data.successful_deployments;
+
+
+                document.getElementById(
+                    "failedDeployments"
+                ).innerText =
+                    data.failed_deployments;
+
+
+                document.getElementById(
+                    "activePipelines"
+                ).innerText =
+                    data.active_pipelines;
+
+            } catch (error) {
+
+                console.error(
+                    "Dashboard error:",
+                    error
+                );
+
+            }
+        }
+
+
+        async function loadProjects() {
+
+            const projectsDiv =
+                document.getElementById(
+                    "projects"
+                );
+
+            try {
+
+                const response =
+                    await fetch(
+                        `${API_URL}/projects`
+                    );
+
+                if (!response.ok) {
+                    throw new Error(
+                        "Projects API failed"
+                    );
+                }
+
+                const projects =
+                    await response.json();
+
+
+                projectsDiv.innerHTML = "";
+
+
+                if (!projects.length) {
+
+                    projectsDiv.innerHTML =
+                        `
+                        <div style="padding:20px 8px;color:#6b7280;">
+                            No projects available.
+                        </div>
+                        `;
+
+                    return;
+                }
+
+
+                projects.slice(0, 5).forEach(
+                    project => {
+
+                        const row =
+                            document.createElement(
+                                "div"
+                            );
+
+                        row.className =
+                            "project-row";
+
+
+                        row.innerHTML = `
+                            <div>
+                                <strong>
+                                    ${project.name}
+                                </strong>
+                            </div>
+
+                            <div class="success">
+                                ${project.status || "Active"}
+                            </div>
+
+                            <div>
+                                v1.0
+                            </div>
+
+                            <div>
+                                ${
+                                    project.created_at
+                                    ? new Date(
+                                        project.created_at
+                                    ).toLocaleDateString()
+                                    : "Today"
+                                }
+                            </div>
+                        `;
+
+
+                        projectsDiv.appendChild(row);
+
+                    }
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "Projects error:",
+                    error
+                );
+
+                projectsDiv.innerHTML =
+                    `
+                    <div style="padding:20px 8px;color:#dc2626;">
+                        Failed to load projects.
+                    </div>
+                    `;
+            }
+        }
+
+
+        function analyzePipeline() {
+
+            alert(
+                "AI DevOps Assistant is ready for pipeline analysis."
+            );
+
+        }
+
+
+        loadDashboard();
+        loadProjects();
+
+    </script>
 
 </body>
 </html>

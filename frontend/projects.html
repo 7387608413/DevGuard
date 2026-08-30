@@ -6,44 +6,107 @@
     <title>DevGuard Projects</title>
 
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background: #f5f7fb;
             margin: 0;
-            color: #1f2937;
+            font-family: Arial, sans-serif;
+            background: #f6f8fb;
+            color: #111827;
         }
 
-        .container {
-            max-width: 700px;
-            margin: 60px auto;
-            background: white;
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 230px;
+            height: 100vh;
+            background: #111827;
+            color: white;
+            padding: 25px 15px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            padding: 0 12px;
+            margin-bottom: 40px;
+        }
+
+        .menu {
+            display: block;
+            text-decoration: none;
+            color: #9ca3af;
+            padding: 13px 12px;
+            margin-bottom: 5px;
+            border-radius: 8px;
+        }
+
+        .menu:hover,
+        .menu.active {
+            background: #1f2937;
+            color: white;
+        }
+
+        .main {
+            margin-left: 230px;
             padding: 30px;
+        }
+
+        .header {
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        .header p {
+            color: #6b7280;
+            margin-top: 7px;
+        }
+
+        .project-card,
+        .projects-list {
+            max-width: 1000px;
+            background: white;
+            padding: 25px;
+            border: 1px solid #e5e7eb;
             border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
         }
 
-        h1 {
-            margin-bottom: 8px;
+        .project-card h2,
+        .projects-list h2 {
+            margin-top: 0;
         }
 
-        p {
+        .project-card p {
             color: #6b7280;
         }
 
         label {
             display: block;
-            margin-top: 20px;
+            margin-top: 22px;
             margin-bottom: 8px;
             font-weight: bold;
+            font-size: 14px;
         }
 
         input {
             width: 100%;
-            padding: 12px;
+            padding: 13px;
             border: 1px solid #d1d5db;
             border-radius: 8px;
             font-size: 15px;
-            box-sizing: border-box;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #111827;
         }
 
         button {
@@ -62,78 +125,329 @@
         }
 
         #message {
-            margin-top: 20px;
+            margin-top: 18px;
             font-weight: bold;
+        }
+
+        .info {
+            margin-top: 25px;
+            padding: 15px;
+            background: #f9fafb;
+            border-radius: 8px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .project-item {
+            padding: 18px;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        .project-item h3 {
+            margin: 0 0 8px 0;
+        }
+
+        .project-item a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        .project-item a:hover {
+            text-decoration: underline;
+        }
+
+        .status {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            background: #dcfce7;
+            color: #15803d;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .loading {
+            color: #6b7280;
+        }
+
+        @media (max-width: 700px) {
+            .sidebar {
+                width: 180px;
+            }
+
+            .main {
+                margin-left: 180px;
+                padding: 20px;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <div class="container">
+    <aside class="sidebar">
 
-        <h1>Create Project</h1>
-        <p>Connect your GitHub repository with DevGuard.</p>
+        <div class="logo">DevGuard</div>
 
-        <label>Project Name</label>
-        <input
-            type="text"
-            id="projectName"
-            placeholder="Enter project name"
-        >
+        <a href="index.html" class="menu">Dashboard</a>
+        <a href="projects.html" class="menu active">Projects</a>
+        <a href="#" class="menu">Deployments</a>
+        <a href="#" class="menu">Pipelines</a>
+        <a href="#" class="menu">Logs</a>
+        <a href="#" class="menu">AI Assistant</a>
 
-        <label>GitHub Repository URL</label>
-        <input
-            type="text"
-            id="githubUrl"
-            placeholder="https://github.com/username/project"
-        >
+    </aside>
 
-        <button onclick="addProject()">Add Project</button>
 
-        <div id="message"></div>
+    <main class="main">
 
-    </div>
+        <div class="header">
+            <h1>Projects</h1>
+            <p>Connect and manage your GitHub projects.</p>
+        </div>
+
+
+        <div class="project-card">
+
+            <h2>Add New Project</h2>
+
+            <p>
+                Connect your GitHub repository with DevGuard
+                to prepare it for CI/CD deployment.
+            </p>
+
+
+            <label for="projectName">
+                Project Name
+            </label>
+
+            <input
+                type="text"
+                id="projectName"
+                placeholder="Enter project name"
+            >
+
+
+            <label for="githubUrl">
+                GitHub Repository URL
+            </label>
+
+            <input
+                type="text"
+                id="githubUrl"
+                placeholder="https://github.com/username/project"
+            >
+
+
+            <button onclick="addProject()">
+                Add Project
+            </button>
+
+
+            <div id="message"></div>
+
+
+            <div class="info">
+                After adding a project, DevGuard will use the
+                repository for pipeline and deployment operations.
+            </div>
+
+        </div>
+
+
+        <div class="projects-list">
+
+            <h2>Your Projects</h2>
+
+            <div id="projectsList" class="loading">
+                Loading projects...
+            </div>
+
+        </div>
+
+    </main>
+
 
     <script>
-        async function addProject() {
 
-            const name = document.getElementById("projectName").value;
-            const github_url = document.getElementById("githubUrl").value;
-            const message = document.getElementById("message");
+        const API_URL = "http://16.171.171.86:5000";
 
-            if (!name || !github_url) {
-                message.innerText = "Please fill all fields.";
-                return;
-            }
+
+        async function loadProjects() {
+
+            const projectsList =
+                document.getElementById("projectsList");
 
             try {
 
-                const response = await fetch("http://localhost:5000/projects", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        name,
-                        github_url
-                    })
-                });
+                const response =
+                    await fetch(`${API_URL}/projects`);
 
-                const data = await response.json();
-
-                if (response.ok) {
-                    message.innerText = "Project added successfully!";
-                    document.getElementById("projectName").value = "";
-                    document.getElementById("githubUrl").value = "";
-                } else {
-                    message.innerText = data.message || "Failed to add project.";
+                if (!response.ok) {
+                    throw new Error("Failed to load projects");
                 }
 
+                const projects =
+                    await response.json();
+
+                if (!projects.length) {
+
+                    projectsList.innerHTML =
+                        "No projects added yet.";
+
+                    return;
+                }
+
+
+                projectsList.innerHTML = "";
+
+
+                projects.forEach(project => {
+
+                    const item =
+                        document.createElement("div");
+
+                    item.className = "project-item";
+
+
+                    item.innerHTML = `
+                        <h3>${project.name}</h3>
+
+                        <a
+                            href="${project.github_url}"
+                            target="_blank"
+                        >
+                            ${project.github_url}
+                        </a>
+
+                        <br>
+
+                        <span class="status">
+                            ${project.status || "Active"}
+                        </span>
+                    `;
+
+
+                    projectsList.appendChild(item);
+
+                });
+
             } catch (error) {
-                message.innerText = "Backend connection failed.";
+
+                console.error(error);
+
+                projectsList.innerHTML =
+                    "Failed to load projects.";
             }
         }
+
+
+        async function addProject() {
+
+            const name =
+                document
+                    .getElementById("projectName")
+                    .value
+                    .trim();
+
+
+            const github_url =
+                document
+                    .getElementById("githubUrl")
+                    .value
+                    .trim();
+
+
+            const message =
+                document.getElementById("message");
+
+
+            if (!name || !github_url) {
+
+                message.innerText =
+                    "Please fill all fields.";
+
+                message.style.color = "red";
+
+                return;
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `${API_URL}/projects`,
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+                                name: name,
+                                github_url: github_url
+                            })
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (response.ok) {
+
+                    message.innerText =
+                        "Project added successfully!";
+
+                    message.style.color =
+                        "green";
+
+
+                    document
+                        .getElementById("projectName")
+                        .value = "";
+
+
+                    document
+                        .getElementById("githubUrl")
+                        .value = "";
+
+
+                    loadProjects();
+
+                } else {
+
+                    message.innerText =
+                        data.message ||
+                        "Failed to add project.";
+
+                    message.style.color =
+                        "red";
+                }
+
+
+            } catch (error) {
+
+                console.error(error);
+
+                message.innerText =
+                    "Backend connection failed.";
+
+                message.style.color =
+                    "red";
+            }
+        }
+
+
+        loadProjects();
+
     </script>
 
 </body>

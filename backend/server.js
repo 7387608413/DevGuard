@@ -110,7 +110,25 @@ app.get("/dashboard", (req, res) => {
         });
     });
 });
+app.get("/deployments", (req, res) => {
+    const sql = `
+        SELECT *
+        FROM deployments
+        ORDER BY id DESC
+    `;
 
+    db.query(sql, (err, results) => {
+        if (err) {
+            console.log("Failed to load deployments:", err.message);
+
+            return res.status(500).json({
+                message: "Failed to load deployments"
+            });
+        }
+
+        res.json(results);
+    });
+});
 app.listen(5000, "0.0.0.0", () => {
     console.log("DevGuard server running on port 5000");
 });
